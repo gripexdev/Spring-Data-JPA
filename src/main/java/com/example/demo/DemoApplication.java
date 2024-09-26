@@ -41,20 +41,23 @@ public class DemoApplication {
             studentRepository.saveAll(List.of(maria, maria2, ahmed));
 
             //Section-2
+            // Find Student By Email
             studentRepository
                     .findStudentByEmail("ahmed.ali@gmail.com")
                     .ifPresentOrElse(
                             System.out::println,
                             () -> System.out.println("Student with email ahmed.ali@gmail.com not found"));
 
+            // find student with name Maria and has age equal to 21
             studentRepository
                     .findStudentsByFirstNameEqualsAndAgeEquals(
                             "Maria",
                             21
                     ).forEach(System.out::println);
 
+            // find student with name Maria and has age greater than or equal to 18
             studentRepository
-                    .findStudentsByFirstNameEqualsAndAgeGreaterThan(
+                    .findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqual(
                             "Maria",
                             18
                     ).forEach(System.out::println);

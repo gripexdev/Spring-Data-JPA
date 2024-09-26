@@ -1,7 +1,10 @@
 package com.example.demo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,4 +37,18 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             nativeQuery = true )
     List<Student> findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqualNative(
             String firstName, Integer age);
+
+    // Find student by first name and age greater than equal (Using Native Query) with @Param
+    @Query(
+            value = "SELECT * FROM Student WHERE first_name = :firstName AND age >= :age",
+            nativeQuery = true )
+    List<Student> findStudentsByFirstNameEqualsAndAgeIsGreaterThanEqualNativeV2(
+            @Param("firstName") String firstName,
+            @Param("age") Integer age);
+
+    // Delete Student by id, if deleted return = 1 // if not = 0
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Student s WHERE s.id = ?1")
+    int deleteStudentById(Long id);
 }

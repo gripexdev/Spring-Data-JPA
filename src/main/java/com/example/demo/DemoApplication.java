@@ -41,6 +41,9 @@ public class DemoApplication {
             );
 
             studentIdCardRepository.save(studentIdCard);
+
+            studentIdCardRepository.findById(1L)
+                    .ifPresent(System.out::println);
         };
     }
 

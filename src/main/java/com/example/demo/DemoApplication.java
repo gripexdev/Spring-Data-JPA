@@ -5,6 +5,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 
 @SpringBootApplication
@@ -18,20 +21,51 @@ public class DemoApplication {
     CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
         return args -> {
 
-            Faker faker = new Faker();
-            // Saving Random Students Using Faker
-            for (int i = 0; i <= 20; i++) {
-                String firstName = faker.name().firstName();
-                String lastName = faker.name().lastName();
-                String email = String.format("%s.%s@gmail.com", firstName, lastName);
-                Student student = new Student(
-                        firstName,
-                        lastName,
-                        email,
-                        faker.number().numberBetween(17, 55)
-                );
-                studentRepository.save(student);
-            }
+            generateRandomStudents(studentRepository);
+
+            // sorting(studentRepository);
+
+            // Paging
+            PageRequest pageRequest = PageRequest.of(
+                    0,
+                    5,
+                    Sort.by("firstName").ascending());
+            Page<Student> page = studentRepository.findAll(pageRequest);
+            System.out.println(page);
+
         };
+    }
+
+    private static void sorting(StudentRepository studentRepository) {
+        // Sort
+        Sort sort = Sort.by(Sort.Direction.ASC, "firstName");
+
+        // Method 2
+        Sort sortV2 = Sort.by("firstName").ascending();
+
+        // Sort By firstName and Age
+        Sort sortFirstnameAndAge = Sort.by("firstName")
+                .and(Sort.by("age").descending());
+
+        // Show all Students names sorted by firstName ASC
+        studentRepository.findAll(sort)
+                .forEach(student -> System.out.println(student.getFirstName()));
+    }
+
+    private static void generateRandomStudents(StudentRepository studentRepository) {
+        Faker faker = new Faker();
+        // Saving Random Students Using Faker
+        for (int i = 0; i <= 20; i++) {
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = String.format("%s.%s@gmail.com", firstName, lastName);
+            Student student = new Student(
+                    firstName,
+                    lastName,
+                    email,
+                    faker.number().numberBetween(17, 55)
+            );
+            studentRepository.save(student);
+        }
     }
 }

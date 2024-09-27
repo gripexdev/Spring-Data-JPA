@@ -18,38 +18,30 @@ public class DemoApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
+    CommandLineRunner commandLineRunner(
+            StudentRepository studentRepository,
+            StudentIdCardRepository studentIdCardRepository) {
+
         return args -> {
+            Faker faker = new Faker();
 
-            generateRandomStudents(studentRepository);
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = String.format("%s.%s@gmail.com", firstName, lastName);
+            Student student = new Student(
+                    firstName,
+                    lastName,
+                    email,
+                    faker.number().numberBetween(17, 55)
+            );
 
-            // sorting(studentRepository);
+            StudentIdCard studentIdCard = new StudentIdCard(
+                    "123456789",
+                    student
+            );
 
-            // Paging
-            PageRequest pageRequest = PageRequest.of(
-                    0,
-                    5,
-                    Sort.by("firstName").ascending());
-            Page<Student> page = studentRepository.findAll(pageRequest);
-            System.out.println(page);
-
+            studentIdCardRepository.save(studentIdCard);
         };
-    }
-
-    private static void sorting(StudentRepository studentRepository) {
-        // Sort
-        Sort sort = Sort.by(Sort.Direction.ASC, "firstName");
-
-        // Method 2
-        Sort sortV2 = Sort.by("firstName").ascending();
-
-        // Sort By firstName and Age
-        Sort sortFirstnameAndAge = Sort.by("firstName")
-                .and(Sort.by("age").descending());
-
-        // Show all Students names sorted by firstName ASC
-        studentRepository.findAll(sort)
-                .forEach(student -> System.out.println(student.getFirstName()));
     }
 
     private static void generateRandomStudents(StudentRepository studentRepository) {

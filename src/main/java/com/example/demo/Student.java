@@ -60,7 +60,8 @@ public class Student {
 
     @OneToOne(
             mappedBy = "student",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE} // when adding/removing a student w IDCARD, the idCard will be saved/removed too
     )
     private StudentIdCard studentIdCard;
 
@@ -114,7 +115,10 @@ public class Student {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
+    public void setStudentIdCard(StudentIdCard studentIdCard) {
+        this.studentIdCard = studentIdCard;
+    }
 
     public Integer getAge() {
         return age;

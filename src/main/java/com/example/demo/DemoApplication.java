@@ -56,8 +56,11 @@ public class DemoApplication {
                     student
             );
 
-            studentIdCardRepository.save(studentIdCard);
+            student.setStudentIdCard(studentIdCard);
 
+            studentRepository.save(student);
+
+            // Trying Fetch types EAGER vs LAZY when loading a STUDENT
             studentRepository.findById(1L)
                     .ifPresent(s -> {
                         System.out.println("fetch type lazy...");
